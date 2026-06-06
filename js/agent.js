@@ -88,7 +88,8 @@ Rules: dx/dy must be -1, 0, or 1. Resource names: ${Object.keys(CONFIG.RESOURCES
           { role: "user", content: prompt },
         ],
         temperature: 0.8,
-        max_tokens: 200,
+        max_tokens: 500,
+        enable_thinking: false,
       }),
     });
 

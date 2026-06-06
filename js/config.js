@@ -5,7 +5,7 @@
 export const CONFIG = {
   // API
   API_ENDPOINT: "https://token-plan-sgp.xiaomimimo.com/v1/chat/completions",
-  API_MODEL: "mimo-v2.5-flash",
+  API_MODEL: "mimo-v2.5-pro",
 
   // World
   WORLD_NAME: "Whispering Glade",
@@ -40,7 +40,7 @@ export const CONFIG = {
       name: "Fern",
       emoji: "🦊",
       species: "fox",
-      personality: "Clever trader. Always looking for a deal. Charismatic but calculating. Prefers to negotiate rather than fight.",
+      personality: "Clever trader. Always looking for a deal. Charismatic but calculating.",
       startInventory: { berries: 2 },
       startX: 1, startY: 1,
     },
@@ -49,7 +49,7 @@ export const CONFIG = {
       name: "Moss",
       emoji: "🐻",
       species: "bear",
-      personality: "Hoarder. Defensive and territorial. Strong but slow. Collects resources obsessively and distrusts others.",
+      personality: "Hoarder. Defensive and territorial. Strong but slow. Distrusts others.",
       startInventory: { wood: 3 },
       startX: 4, startY: 1,
     },
@@ -58,7 +58,7 @@ export const CONFIG = {
       name: "Dewdrop",
       emoji: "🐰",
       species: "rabbit",
-      personality: "Social butterfly. Shares gossip freely. Easily scared but always knows what's happening. Fast and nimble.",
+      personality: "Social butterfly. Shares gossip freely. Easily scared but always knows what's happening.",
       startInventory: { berries: 3, herbs: 1 },
       startX: 2, startY: 4,
     },
@@ -67,7 +67,7 @@ export const CONFIG = {
       name: "Thornwick",
       emoji: "🦉",
       species: "owl",
-      personality: "Wise strategist. Plays the long game. Observant and patient. Trades information for resources. Speaks in riddles.",
+      personality: "Wise strategist. Plays the long game. Observant and patient. Speaks in riddles.",
       startInventory: { gems: 1, herbs: 2 },
       startX: 5, startY: 3,
     },
@@ -76,7 +76,7 @@ export const CONFIG = {
       name: "Rubble",
       emoji: "🦝",
       species: "raccoon",
-      personality: "Opportunistic scavenger. Takes what others leave. Sneaky but charming. Will trade anything for a profit.",
+      personality: "Opportunistic scavenger. Takes what others leave. Sneaky but charming.",
       startInventory: { water: 2 },
       startX: 3, startY: 5,
     },
