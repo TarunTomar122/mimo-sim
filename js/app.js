@@ -18,8 +18,9 @@ class App {
     this.processing = false;
 
     this._bindEvents();
-    this._checkApiKey();
     this.renderer.render();
+    document.getElementById("api-status").textContent = "✅ Ready";
+    document.getElementById("api-status").className = "status-ok";
   }
 
   _bindEvents() {
@@ -35,30 +36,10 @@ class App {
         this.timer = setInterval(() => this.step(), this.speed);
       }
     });
-    document.getElementById("btn-set-key").addEventListener("click", () => this._promptApiKey());
-  }
-
-  _checkApiKey() {
-    if (!this.agent.hasKey()) {
-      this._promptApiKey();
-    }
-  }
-
-  _promptApiKey() {
-    const key = prompt("Enter your Mimo API key:");
-    if (key) {
-      this.agent.setApiKey(key);
-      document.getElementById("api-status").textContent = "✅ API key set";
-      document.getElementById("api-status").className = "status-ok";
-    }
   }
 
   async step() {
     if (this.processing) return;
-    if (!this.agent.hasKey()) {
-      this._promptApiKey();
-      return;
-    }
 
     this.processing = true;
     document.getElementById("btn-step").disabled = true;

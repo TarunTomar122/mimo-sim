@@ -6,6 +6,7 @@ export const CONFIG = {
   // API
   API_ENDPOINT: "https://token-plan-sgp.xiaomimimo.com/v1/chat/completions",
   API_MODEL: "mimo-v2.5-pro",
+  API_KEY: "tp-saezfgn2ggk2mmvk4pi2a5sgjqix6ugey611zo6nxvj8ubuz",
 
   // World
   WORLD_NAME: "Whispering Glade",
