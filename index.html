@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌿 Whispering Glade</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0e17; --surface: #111827; --surface2: #1a2236;
+      --border: #2a3a5c; --text: #e2e8f0; --text-dim: #64748b;
+      --accent: #10b981; --accent2: #3b82f6; --danger: #ef4444;
+      --warn: #f59e0b; --purple: #a78bfa;
+    }
+    body {
+      font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+    }
+    .header { text-align: center; padding: 16px 12px 8px; border-bottom: 1px solid var(--border); }
+    .header h1 { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .header .subtitle { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+    #tick-display {
+      display: inline-block; background: var(--surface2);
+      padding: 2px 10px; border-radius: 12px; font-size: 12px; color: var(--accent); margin-top: 6px;
+    }
+    .controls {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap;
+    }
+    .controls button {
+      background: var(--surface2); color: var(--text); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 8px; font-family: inherit; font-size: 13px; cursor: pointer;
+    }
+    .controls button:hover { border-color: var(--accent); color: var(--accent); }
+    .controls button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .controls button.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+    .speed-group { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); }
+    .speed-group input[type="range"] { width: 80px; accent-color: var(--accent); }
+    .api-bar { text-align: center; padding: 4px; font-size: 11px; }
+    .status-missing { color: var(--danger); }
+    .status-ok { color: var(--accent); }
+    .main { display: grid; grid-template-columns: 1fr; }
+    @media (min-width: 768px) {
+      .main { grid-template-columns: 280px 1fr; }
+    }
+    .world-section { padding: 12px; }
+    .section-title { font-size: 12px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    #world-grid {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; max-width: 360px; margin: 0 auto;
+    }
+    .cell {
+      aspect-ratio: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 1px; font-size: 11px; position: relative; min-height: 44px;
+    }
+    .cell:has(.creature-marker) { border-color: var(--accent); }
+    .resource { font-size: 10px; line-height: 1; }
+    .creature-marker { font-size: 16px; line-height: 1; animation: bounce 0.5s; }
+    .creature-marker.thinking { animation: pulse 0.8s infinite; }
+    .cell-coord { position: absolute; bottom: 1px; right: 3px; font-size: 7px; color: var(--text-dim); opacity: 0.4; }
+    .creatures-section { padding: 12px; border-top: 1px solid var(--border); }
+    @media (min-width: 768px) { .creatures-section { border-top: none; border-left: 1px solid var(--border); } }
+    #creatures-panel { display: flex; flex-direction: column; gap: 8px; }
+    .creature-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px;
+    }
+    .creature-card.dead { opacity: 0.4; border-color: var(--danger); }
+    .creature-card.thinking { border-color: var(--accent); box-shadow: 0 0 12px rgba(16,185,129,0.15); }
+    .creature-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .creature-emoji { font-size: 20px; }
+    .creature-name { font-weight: 700; font-size: 14px; }
+    .creature-species { font-size: 10px; color: var(--text-dim); }
+    .action-badge {
+      margin-left: auto; background: var(--accent2); color: white;
+      font-size: 9px; padding: 1px 6px; border-radius: 6px; font-weight: 600; text-transform: uppercase;
+    }
+    .creature-stats { display: flex; flex-direction: column; gap: 3px; margin-bottom: 6px; }
+    .stat-bar { display: flex; align-items: center; gap: 4px; font-size: 10px; }
+    .stat-label { width: 16px; text-align: center; }
+    .stat-val { width: 24px; text-align: right; color: var(--text-dim); font-size: 9px; }
+    .bar { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s; }
+    .bar-fill.mood { background: var(--purple); }
+    .stat-bar.danger .bar-fill { background: var(--danger); }
+    .stat-bar.warn .bar-fill { background: var(--warn); }
+    .creature-inv { font-size: 11px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+    .pebbles { margin-left: auto; color: var(--warn); }
+    .creature-thought { font-size: 10px; color: var(--accent); font-style: italic; margin-top: 4px; opacity: 0.8; line-height: 1.3; }
+    .creature-gossip { font-size: 10px; color: var(--purple); margin-top: 3px; line-height: 1.3; }
+    .creature-pos { font-size: 9px; color: var(--text-dim); margin-top: 3px; }
+    .log-section { padding: 12px; border-top: 1px solid var(--border); grid-column: 1 / -1; }
+    #event-log { max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+    .event { font-size: 11px; padding: 3px 6px; border-radius: 4px; display: flex; gap: 6px; line-height: 1.4; }
+    .event-tick { color: var(--text-dim); font-size: 9px; min-width: 24px; }
+    .event.trade { background: rgba(16,185,129,0.08); }
+    .event.gossip { background: rgba(167,139,250,0.08); }
+    .event.move { background: rgba(59,130,246,0.05); }
+    .event.forage { background: rgba(245,158,11,0.05); }
+    .event.danger { background: rgba(239,68,68,0.1); color: var(--danger); }
+    .event.system { color: var(--text-dim); font-weight: 600; }
+    .event.error { color: var(--danger); }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🌿 Whispering Glade</h1>
+    <div class="subtitle">LLM creatures · emergent behavior · powered by Mimo</div>
+    <div id="tick-display">Tick 0</div>
+  </div>
+  <div class="api-bar">
+    <span id="api-status" class="status-missing">⚠️ No API key</span>
+    <button id="btn-set-key" style="background:none;border:none;color:var(--accent2);cursor:pointer;font-size:11px;text-decoration:underline;">set key</button>
+  </div>
+  <div class="controls">
+    <button id="btn-step">⏭️ Step</button>
+    <button id="btn-auto">▶️ Auto</button>
+    <button id="btn-reset">🔄 Reset</button>
+    <div class="speed-group">
+      <span>🐢</span>
+      <input type="range" id="speed-slider" min="500" max="5000" value="1500" step="100">
+      <span>🐇</span>
+      <span id="speed-label">1.5s</span>
+    </div>
+  </div>
+  <div class="main">
+    <div class="world-section">
+      <div class="section-title">🌍 World</div>
+      <div id="world-grid"></div>
+    </div>
+    <div class="creatures-section">
+      <div class="section-title">🐾 Creatures</div>
+      <div id="creatures-panel"></div>
+    </div>
+    <div class="log-section">
+      <div class="section-title">📜 Event Log</div>
+      <div id="event-log"></div>
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
